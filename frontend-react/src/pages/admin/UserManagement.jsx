@@ -8,12 +8,12 @@ export default function UserManagement() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { fetchUsers() }, [])
-
   const fetchUsers = async () => {
     setLoading(true)
     getUsers().then(r => setUsers(r.data || [])).finally(() => setLoading(false))
   }
+
+  useEffect(() => { fetchUsers() }, [])
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Delete citizen account "${name}"? This action cannot be undone.`)) return

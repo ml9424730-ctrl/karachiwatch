@@ -102,6 +102,9 @@ export default function ReportWaste() {
         body: fd,
       })
       const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.detail || 'Image scan failed')
+      }
       setAiResult(data)
       if (data.annotated_image_b64) {
         setAnnotated(`data:image/jpeg;base64,${data.annotated_image_b64}`)
@@ -110,10 +113,10 @@ export default function ReportWaste() {
         setStep(2)
         toast.success(`Waste verified: ${data.total_detections} item(s) detected`)
       } else {
-        toast.warning('No street garbage detected in this image')
+        toast.warning(data.scan_note || 'No street garbage detected in this image')
       }
-    } catch {
-      toast.error('Image scan failed. Please check network connection.')
+    } catch (err) {
+      toast.error(err.message || 'Image scan failed. Please check network connection.')
     } finally {
       setLoading(false)
     }

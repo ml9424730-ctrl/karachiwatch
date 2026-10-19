@@ -1,16 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/api'
 import { useAuth } from '../contexts/AuthContext'
-import { AppLogo, ShieldIcon, KeyIcon, CheckCircleIcon } from '../components/Icons'
+import { AppLogo, TrashIcon, ShieldIcon, KeyIcon, CheckCircleIcon } from '../components/Icons'
 import './auth.css'
 
 export default function Login() {
   const [form, setForm] = useState({ email_or_id: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { loginUser } = useAuth()
+  const { user, loginUser } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'admin') navigate('/admin/dashboard', { replace: true })
+      else navigate('/citizen/dashboard', { replace: true })
+    }
+  }, [user, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -72,6 +79,18 @@ export default function Login() {
             </div>
             <h1 className="auth-title">Welcome back</h1>
             <p className="auth-subtitle">Sign in with your email or Citizen ID</p>
+          </div>
+
+          <div className="alert alert-info" style={{marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8}}>
+            <span><strong>Demo citizen:</strong> CIT-10001 / Citizen@Karachi2026</span>
+            <button
+              type="button"
+              className="btn btn-secondary btn-xs"
+              onClick={() => setForm({ email_or_id: 'CIT-10001', password: 'Citizen@Karachi2026' })}
+              style={{fontSize: '0.72rem', padding: '3px 8px'}}
+            >
+              ⚡ Quick Fill
+            </button>
           </div>
 
           {error && (

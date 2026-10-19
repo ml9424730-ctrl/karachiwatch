@@ -118,6 +118,7 @@ class AssignmentCreate(BaseModel):
 
 class StatusUpdate(BaseModel):
     status: str  # Pending, Verified, Assigned, In Progress, Resolved, Rejected
+    notes: Optional[str] = None
 
 
 class VerificationCreate(BaseModel):

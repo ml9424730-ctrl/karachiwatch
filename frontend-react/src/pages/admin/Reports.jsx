@@ -31,14 +31,14 @@ export default function AdminReports() {
   const [assignTeam, setAssignTeam] = useState('')
   const [updating, setUpdating] = useState(false)
 
-  useEffect(() => { fetchReports() }, [])
-
   const fetchReports = async () => {
     setLoading(true)
     const res = await getReports()
     setReports(res.data || [])
     setLoading(false)
   }
+
+  useEffect(() => { fetchReports() }, [])
 
   const openReport = async (r) => {
     setSelected(r); setNewStatus(r.status); setStatusNote('')
@@ -65,6 +65,11 @@ export default function AdminReports() {
       await assignReport(selected.id, { assigned_team: assignTeam, worker_notes: statusNote })
       toast.success('Team assigned — status set to In Progress')
       await fetchReports()
+      if (selected) {
+        const res = await getReport(selected.id)
+        setDetail(res.data)
+        setSelected({ ...selected, status: 'In Progress' })
+      }
     } catch { toast.error('Assignment failed') }
     finally { setUpdating(false) }
   }

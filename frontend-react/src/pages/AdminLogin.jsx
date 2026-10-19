@@ -1,16 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { adminLogin } from '../api/api'
 import { useAuth } from '../contexts/AuthContext'
-import { AppLogo, ShieldIcon, KeyIcon, AnalyticsIcon, UsersIcon } from '../components/Icons'
+import { AppLogo, ShieldIcon, AnalyticsIcon, UsersIcon } from '../components/Icons'
 import './auth.css'
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ email_or_id: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { loginUser } = useAuth()
+  const { user, loginUser } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      navigate('/admin/dashboard', { replace: true })
+    }
+  }, [user, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -74,9 +80,19 @@ export default function AdminLogin() {
             <p className="auth-subtitle">Municipal Administration Portal — restricted access</p>
           </div>
 
-          <div className="alert alert-info" style={{marginBottom: 18}}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            <span><strong>Demo credentials:</strong> ADMIN-001 / Admin@Karachi2026</span>
+          <div className="alert alert-info" style={{marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: 6}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span><strong>Demo credentials:</strong> ADMIN-001 / Admin@Karachi2026</span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-xs"
+              onClick={() => setForm({ email_or_id: 'ADMIN-001', password: 'Admin@Karachi2026' })}
+              style={{fontSize: '0.72rem', padding: '3px 8px'}}
+            >
+              ⚡ Quick Fill
+            </button>
           </div>
 
           {error && (

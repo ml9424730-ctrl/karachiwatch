@@ -54,6 +54,9 @@ export default function AIScanner() {
         body: fd,
       })
       const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.detail || 'Scan request failed')
+      }
       setResult(data)
       if (data.annotated_image_b64) setAnnotated(`data:image/jpeg;base64,${data.annotated_image_b64}`)
       if (data.has_waste && data.total_detections > 0) {
@@ -61,8 +64,8 @@ export default function AIScanner() {
       } else {
         toast.info(data.scan_note || 'Scan complete: No street garbage detected')
       }
-    } catch {
-      toast.error('Scan request failed. Please check backend connection.')
+    } catch (err) {
+      toast.error(err.message || 'Scan request failed. Please check backend connection.')
     } finally { setLoading(false) }
   }
 

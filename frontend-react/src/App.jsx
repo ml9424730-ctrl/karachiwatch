@@ -17,7 +17,6 @@ import ReportWaste from './pages/citizen/ReportWaste'
 import MyReports from './pages/citizen/MyReports'
 import WasteMap from './pages/citizen/WasteMap'
 import Profile from './pages/citizen/Profile'
-import CitizenChatbot from './pages/citizen/Chatbot'
 
 // Admin
 import AdminLayout from './layouts/AdminLayout'

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import {
   AppLogo,
   TrashIcon,
@@ -10,7 +11,9 @@ import {
   ReportIcon,
   KeyIcon,
   AnalyticsIcon,
-  MapIcon
+  MapIcon,
+  DashboardIcon,
+  LogoutIcon
 } from '../components/Icons'
 import './Home.css'
 
@@ -36,6 +39,8 @@ const FEATURES = [
 ]
 
 export default function Home() {
+  const { user, logout } = useAuth()
+
   return (
     <div className="home">
       {/* ── NAVBAR ── */}
@@ -49,15 +54,39 @@ export default function Home() {
         <div className="nav-links">
           <a href="#how" className="nav-link-text">How It Works</a>
           <a href="#about" className="nav-link-text">About</a>
-          <Link to="/login" className="btn btn-secondary btn-sm">
-            <KeyIcon size={14} /> Login
-          </Link>
-          <Link to="/register" className="btn btn-primary btn-sm">
-            <ReportIcon size={14} /> Register
-          </Link>
-          <Link to="/admin-login" className="btn btn-admin btn-sm">
-            <ShieldIcon size={14} /> Admin
-          </Link>
+          {user ? (
+            <>
+              {user.role === 'admin' ? (
+                <Link to="/admin/dashboard" className="btn btn-admin btn-sm">
+                  <ShieldIcon size={14} /> Admin Portal
+                </Link>
+              ) : (
+                <Link to="/citizen/dashboard" className="btn btn-primary btn-sm">
+                  <DashboardIcon size={14} /> My Dashboard
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={logout}
+                className="btn btn-secondary btn-sm"
+                style={{display: 'inline-flex', alignItems: 'center', gap: 6}}
+              >
+                <LogoutIcon size={14} /> Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-secondary btn-sm">
+                <KeyIcon size={14} /> Login
+              </Link>
+              <Link to="/register" className="btn btn-primary btn-sm">
+                <ReportIcon size={14} /> Register
+              </Link>
+              <Link to="/admin-login" className="btn btn-admin btn-sm">
+                <ShieldIcon size={14} /> Admin
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -77,23 +106,69 @@ export default function Home() {
             Citizens report, AI verifies, authorities dispatch.
           </p>
           <div className="hero-btns">
-            <Link to="/register" className="btn btn-primary btn-lg">
-              <ReportIcon size={17} /> Get Started
-            </Link>
-            <Link
-              to="/login"
-              className="btn btn-sm"
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.85)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                padding: '12px 20px',
-                fontSize: '0.9rem',
-                borderRadius: '14px'
-              }}
-            >
-              <KeyIcon size={16} /> Sign In
-            </Link>
+            {user ? (
+              user.role === 'admin' ? (
+                <>
+                  <Link to="/admin/dashboard" className="btn btn-primary btn-lg">
+                    <DashboardIcon size={17} /> Admin Dashboard
+                  </Link>
+                  <Link
+                    to="/admin/reports"
+                    className="btn btn-sm"
+                    style={{
+                      background: 'rgba(255,255,255,0.08)',
+                      color: 'rgba(255,255,255,0.85)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '12px 20px',
+                      fontSize: '0.9rem',
+                      borderRadius: '14px'
+                    }}
+                  >
+                    <ReportIcon size={16} /> Manage Reports
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/citizen/report" className="btn btn-primary btn-lg">
+                    <ReportIcon size={17} /> Report Waste
+                  </Link>
+                  <Link
+                    to="/citizen/dashboard"
+                    className="btn btn-sm"
+                    style={{
+                      background: 'rgba(255,255,255,0.08)',
+                      color: 'rgba(255,255,255,0.85)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '12px 20px',
+                      fontSize: '0.9rem',
+                      borderRadius: '14px'
+                    }}
+                  >
+                    <DashboardIcon size={16} /> My Dashboard
+                  </Link>
+                </>
+              )
+            ) : (
+              <>
+                <Link to="/register" className="btn btn-primary btn-lg">
+                  <ReportIcon size={17} /> Get Started
+                </Link>
+                <Link
+                  to="/login"
+                  className="btn btn-sm"
+                  style={{
+                    background: 'rgba(255,255,255,0.08)',
+                    color: 'rgba(255,255,255,0.85)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '12px 20px',
+                    fontSize: '0.9rem',
+                    borderRadius: '14px'
+                  }}
+                >
+                  <KeyIcon size={16} /> Sign In
+                </Link>
+              </>
+            )}
           </div>
           <div className="hero-stats">
             <div className="hero-stat">

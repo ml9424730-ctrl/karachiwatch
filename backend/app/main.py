@@ -30,7 +30,7 @@ from backend.app.schemas.schemas import (
 from backend.app.services.rag_service import rag_assistant
 from backend.app.auth.auth import (
     hash_password, verify_password, create_access_token,
-    get_current_user, require_admin, require_citizen, seed_default_accounts
+    get_current_user, get_optional_user, require_admin, require_citizen, seed_default_accounts
 )
 from backend.app.services.waste_service import (
     check_duplicate_report, auto_assign_team, verify_cleanup_comparison
@@ -183,7 +183,7 @@ def get_my_profile(current_user: User = Depends(get_current_user)):
 @app.post("/chat/assistant", response_model=ChatResponse, tags=["Citizen Assistant"])
 async def ask_citizen_assistant(
     payload: ChatQuery,
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     """
     RAG-powered conversational assistant for citizens.
@@ -295,7 +295,7 @@ async def create_report(
     description: Optional[str] = Form(None),
     image: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     """
     Submit a civic waste report. Links to authenticated citizen account.
@@ -740,7 +740,7 @@ def update_report_status(
         from_status=old_status,
         to_status=rep.status,
         changed_by=f"Admin {admin.full_name}",
-        notes=f"Status changed from {old_status} to {rep.status}.",
+        notes=status_update.notes or f"Status changed from {old_status} to {rep.status}.",
     )
     db.add(hist)
 
